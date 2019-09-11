@@ -13,6 +13,8 @@ class SavedModelConvertMulti(object):
 
         keras.backend.clear_session()
         keras.backend.set_learning_phase(0)
+
+        # params need to be changed according to your own model
         model = MultiStyleTransferNetwork.build(
             (256, 256),
             47,
@@ -20,6 +22,7 @@ class SavedModelConvertMulti(object):
             checkpoint_file=model_path
         )
 
+        # the key can be defined by your self
         signature = tf.saved_model.signature_def_utils.predict_signature_def(
             inputs={'image': model.input}, outputs={'output_image': model.output})
 

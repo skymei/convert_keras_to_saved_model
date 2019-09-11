@@ -1,6 +1,7 @@
 import os
 import keras
 import tensorflow as tf
+from keras import backend as K
 from core_single.models import StyleTransferNetwork
 
 
@@ -20,12 +21,13 @@ class SavedModelConvertSingle(object):
             keras.backend.clear_session()
             keras.backend.set_learning_phase(0)
 
+            # alpha is defined by model
             model = StyleTransferNetwork.build((None, None), alpha=0.5)
             model.load_weights(model_path, by_name=False)
 
             tf.keras.backend.set_learning_phase(0)  # Ignore dropout at inference
             signature = tf.saved_model.signature_def_utils.predict_signature_def(
-                inputs={'input_1': model.input}, outputs={'output_image': model.output})
+                inputs={'image': model.input}, outputs={'output_image': model.output})
 
             builder = tf.saved_model.builder.SavedModelBuilder(output_dir)
             builder.add_meta_graph_and_variables(
